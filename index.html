@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Gaelic Football Full Stats Tracker</title>
+        <!-- Include Chart.js for trends visualization -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            :root {
+                --primary-color: #007bff;
+                --secondary-color: #0056b3;
+                --bg-color: #f7f9fc;
+                --card-bg: #ffffff;
+                --text-color: #333;
+                --border-radius: 8px;
+            }
+            * {
+                box-sizing: border-box;
+            }
+            body {
+                font-family: "Roboto", sans-serif;
+                margin: 0;
+                padding-top: 70px;
+                background: var(--bg-color);
+                color: var(--text-color);
+            }
+            header[role="banner"] {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 60px;
+                background: var(--card-bg);
+                border-bottom: 1px solid #ddd;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 0 20px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                z-index: 1000;
+            }
+            header h1 {
+                font-size: 1.5em;
+                margin: 0;
+            }
+            .header-buttons button {
+                padding: 10px 15px;
+                font-size: 1em;
+                border: none;
+                border-radius: var(--border-radius);
+                background: var(--primary-color);
+                color: #fff;
+                cursor: pointer;
+                margin-left: 10px;
+                transition: background-color 0.2s ease;
+            }
+            .header-buttons button:active {
+                background: var(--secondary-color);
+            }
+            main[role="main"] {
+                margin: 20px;
+            }
+            .teams {
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+            }
+            .team {
+                background: var(--card-bg);
+                border: 1px solid #ddd;
+                border-radius: var(--border-radius);
+                padding: 15px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+            .team h2 {
+                text-align: center;
+                margin: 0 0 10px;
+            }
+            .section {
+                margin-bottom: 20px;
+            }
+            .section h3 {
+                margin-bottom: 10px;
+                font-size: 1.1em;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                border-bottom: 1px solid #eee;
+                padding-bottom: 5px;
+            }
+            .section h3 button {
+                padding: 6px 10px;
+                font-size: 0.9em;
+                border: none;
+                border-radius: var(--border-radius);
+                background: var(--primary-color);
+                color: #fff;
+                cursor: pointer;
+                transition: background-color 0.2s ease;
+            }
+            .section h3 button:active {
+                background: var(--secondary-color);
+            }
+            .stat {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 8px 0;
+                border-bottom: 1px solid #f0f0f0;
+            }
+            .stat:last-child {
+                border-bottom: none;
+            }
+            .stat label {
+                flex: 1;
+            }
+            .stat span {
+                flex: 0 0 50px;
+                text-align: center;
+                font-size: 1.2em;
+            }
+            .stat button {
+                padding: 10px 15px;
+                font-size: 1em;
+                border: none;
+                border-radius: var(--border-radius);
+                background: var(--primary-color);
+                color: #fff;
+                cursor: pointer;
+                transition: background-color 0.2s ease;
+                margin-left: 10px;
+            }
+            .stat button:active {
+                background: var(--secondary-color);
+            }
+            .sub-header {
+                margin: 10px 0;
+                font-weight: bold;
+                text-align: center;
+            }
+            .computed {
+                font-size: 0.9em;
+                color: #555;
+                margin-top: 4px;
+                text-align: center;
+            }
+            /* Only Kickouts remains collapsible */
+            .collapsible {
+                max-height: 0;
+                overflow: hidden;
+                opacity: 0;
+                transition: max-height 0.5s ease, opacity 0.5s ease;
+            }
+            .collapsible.open {
+                max-height: 500px;
+                opacity: 1;
+            }
+            @media (min-width: 600px) {
+                .teams {
+                    flex-direction: row;
+                }
+                .team {
+                    flex: 1;
+                }
+            }
+            .more-stats-btn {
+                text-align: center;
+                margin: 20px;
+            }
+            .more-stats-btn button {
+                padding: 12px 20px;
+                font-size: 1em;
+                border: none;
+                border-radius: var(--border-radius);
+                background: var(--primary-color);
+                color: #fff;
+                cursor: pointer;
+                transition: background-color 0.2s ease;
+            }
+            .more-stats-btn button:active {
+                background: var(--secondary-color);
+            }
+            /* Modal styling */
+            .modal {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 2000;
+                justify-content: center;
+                align-items: center;
+                animation: fadeIn 0.3s ease;
+            }
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                }
+                to {
+                    opacity: 1;
+                }
+            }
+            .modal-content {
+                background: var(--card-bg);
+                padding: 20px;
+                border-radius: var(--border-radius);
+                max-width: 500px;
+                width: 90%;
+                text-align: center;
+                position: relative;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            }
+            .modal-content h2 {
+                margin-top: 0;
+            }
+            .modal-content button {
+                margin-top: 10px;
+                padding: 10px 15px;
+                font-size: 1em;
+                border: none;
+                border-radius: var(--border-radius);
+                background: var(--primary-color);
+                color: #fff;
+                cursor: pointer;
+                transition: background-color 0.2s ease;
+            }
+            .modal-content button:active {
+                background: var(--secondary-color);
+            }
+            .close-modal {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                background: transparent;
+                border: none;
+                font-size: 1.5em;
+                cursor: pointer;
+            }
+            /* Responsive Trend Chart */
+            #trendChart {
+                width: 100% !important;
+                height: 200px;
+            }
+        </style>
+    </head>
+    <body>
+        <header role="banner">
+            <h1>Gaelic Football Stats</h1>
+            <div class="header-buttons">
+                <button onclick="undo()">Undo</button>
+            </div>
+        </header>
+
+        <main role="main">
+            <div class="teams">
+                <!-- Home Team -->
+                <div class="team" id="ourTeam">
+                    <h2>Our Team</h2>
+                    <div class="section">
+                        <h3>Basic Stats</h3>
+                        <div class="stat">
+                            <label>Goals:</label>
+                            <span id="ourTeam-basic-goals">0</span>
+                            <button
+                                onclick="update('ourTeam','basic','goals',1)"
+                            >
+                                +1
+                            </button>
+                        </div>
+                        <div class="stat">
+                            <label>Points:</label>
+                            <span id="ourTeam-basic-points">0</span>
+                            <button
+                                onclick="update('ourTeam','basic','points',1)"
+                            >
+                                +1
+                            </button>
+                        </div>
+                        <div class="stat">
+                            <label>2-Point Scores:</label>
+                            <span id="ourTeam-basic-twoPoints">0</span>
+                            <button
+                                onclick="update('ourTeam','basic','twoPoints',1)"
+                            >
+                                +1
+                            </button>
+                        </div>
+                        <div class="computed" id="ourTeam-totalScore"></div>
+                    </div>
+                    <div class="section">
+                        <h3>
+                            Advanced Stats
+                            <button onclick="toggleSection('ourTeam-kickouts')">
+                                Toggle Kickouts
+                            </button>
+                        </h3>
+                        <!-- Kickouts Section (collapsible) -->
+                        <div id="ourTeam-kickouts" class="collapsible open">
+                            <div class="stat">
+                                <label>Our Kickouts Won:</label>
+                                <span id="ourTeam-advanced-kickoutsWon">0</span>
+                                <button
+                                    onclick="update('ourTeam','advanced','kickoutsWon',1)"
+                                >
+                                    +1
+                                </button>
+                            </div>
+                            <div class="stat">
+                                <label>Our Kickouts Lost:</label>
+                                <span id="ourTeam-advanced-kickoutsLost"
+                                    >0</span
+                                >
+                                <button
+                                    onclick="update('ourTeam','advanced','kickoutsLost',1)"
+                                >
+                                    +1
+                                </button>
+                            </div>
+                            <div
+                                class="computed"
+                                id="ourTeam-kickPercent"
+                            ></div>
+                            <div class="stat">
+                                <label>Opp Kickouts Won:</label>
+                                <span id="ourTeam-advanced-oppKickoutsWon"
+                                    >0</span
+                                >
+                                <button
+                                    onclick="update('ourTeam','advanced','oppKickoutsWon',1)"
+                                >
+                                    +1
+                                </button>
+                            </div>
+                            <div class="stat">
+                                <label>Opp Kickouts Lost:</label>
+                                <span id="ourTeam-advanced-oppKickoutsLost"
+                                    >0</span
+                                >
+                                <button
+                                    onclick="update('ourTeam','advanced','oppKickoutsLost',1)"
+                                >
+                                    +1
+                                </button>
+                            </div>
+                            <div
+                                class="computed"
+                                id="ourTeam-oppKickPercent"
+                            ></div>
+                        </div>
+                        <div class="stat">
+                            <label>Forced Turnovers:</label>
+                            <span id="ourTeam-advanced-forcedTurnovers">0</span>
+                            <button
+                                onclick="update('ourTeam','advanced','forcedTurnovers',1)"
+                            >
+                                +1
+                            </button>
+                        </div>
+                        <div class="stat">
+                            <label>Unforced Turnovers:</label>
+                            <span id="ourTeam-advanced-unforcedTurnovers"
+                                >0</span
+                            >
+                            <button
+                                onclick="update('ourTeam','advanced','unforcedTurnovers',1)"
+                            >
+                                +1
+                            </button>
+                        </div>
+                        <!-- Shooting Section: Always visible -->
+                        <div class="sub-header">Shooting</div>
+                        <div class="stat">
+                            <label>Wides:</label>
+                            <span id="ourTeam-advanced-shotsWides">0</span>
+                            <button
+                                onclick="update('ourTeam','advanced','shotsWides',1)"
+                            >
+                                +1
+                            </button>
+                        </div>
+                        <div class="stat">
+                            <label>Dropped Short:</label>
+                            <span id="ourTeam-advanced-shotsDroppedShort"
+                                >0</span
+                            >
+                            <button
+                                onclick="update('ourTeam','advanced','shotsDroppedShort',1)"
+                            >
+                                +1
+                            </button>
+                        </div>
+                        <div class="stat">
+                            <label>Blocked Shots:</label>
+                            <span id="ourTeam-advanced-shotsBlocked">0</span>
+                            <button
+                                onclick="update('ourTeam','advanced','shotsBlocked',1)"
+                            >
+                                +1
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Opposition Team: Only Basic Stats -->
+                <div class="team" id="oppTeam">
+                    <h2>Opposition</h2>
+                    <div class="section">
+                        <h3>Basic Stats</h3>
+                        <div class="stat">
+                            <label>Goals:</label>
+                            <span id="oppTeam-basic-goals">0</span>
+                            <button
+                                onclick="update('oppTeam','basic','goals',1)"
+                            >
+                                +1
+                            </button>
+                        </div>
+                        <div class="stat">
+                            <label>Points:</label>
+                            <span id="oppTeam-basic-points">0</span>
+                            <button
+                                onclick="update('oppTeam','basic','points',1)"
+                            >
+                                +1
+                            </button>
+                        </div>
+                        <div class="stat">
+                            <label>2-Point Scores:</label>
+                            <span id="oppTeam-basic-twoPoints">0</span>
+                            <button
+                                onclick="update('oppTeam','basic','twoPoints',1)"
+                            >
+                                +1
+                            </button>
+                        </div>
+                        <div class="computed" id="oppTeam-totalScore"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- Floating "Show More Stats" Button -->
+            <div class="more-stats-btn">
+                <button onclick="toggleStatsModal()">Show More Stats</button>
+            </div>
+        </main>
+
+        <!-- Stats Modal with Overview, Trends, and Backup/Export -->
+        <div
+            class="modal"
+            id="statsModal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="modalTitle"
+        >
+            <div class="modal-content">
+                <button class="close-modal" onclick="toggleStatsModal()">
+                    &times;
+                </button>
+                <h2 id="modalTitle">Overview & Trends</h2>
+                <div
+                    id="overviewStats"
+                    style="text-align: left; margin-top: 20px"
+                ></div>
+                <!-- Fixed height container for the trend chart -->
+                <div style="width: 100%; height: 200px; margin-top: 20px">
+                    <canvas
+                        id="trendChart"
+                        style="width: 100%; height: 100%"
+                    ></canvas>
+                </div>
+                <button onclick="exportData()">Backup/Export</button>
+                <button onclick="resetGame()">Reset/New Game</button>
+            </div>
+        </div>
+
+        <script>
+            // Global stats data
+            const data = {
+                ourTeam: {
+                    basic: { goals: 0, points: 0, twoPoints: 0 },
+                    advanced: {
+                        kickoutsWon: 0,
+                        kickoutsLost: 0,
+                        oppKickoutsWon: 0,
+                        oppKickoutsLost: 0,
+                        forcedTurnovers: 0,
+                        unforcedTurnovers: 0,
+                        shotsWides: 0,
+                        shotsDroppedShort: 0,
+                        shotsBlocked: 0,
+                    },
+                },
+                oppTeam: {
+                    basic: { goals: 0, points: 0, twoPoints: 0 },
+                },
+            }
+            const historyStack = []
+            let statsHistory = [] // For trend chart snapshots
+            let trendChart // Chart.js instance
+
+            function save() {
+                localStorage.setItem("gfFullStats", JSON.stringify(data))
+                localStorage.setItem("gfHistory", JSON.stringify(statsHistory))
+            }
+            function load() {
+                const saved = localStorage.getItem("gfFullStats")
+                if (saved) Object.assign(data, JSON.parse(saved))
+                const savedHistory = localStorage.getItem("gfHistory")
+                if (savedHistory) statsHistory = JSON.parse(savedHistory)
+                render()
+            }
+            function render() {
+                for (const team in data) {
+                    for (const section in data[team]) {
+                        for (const stat in data[team][section]) {
+                            const el = document.getElementById(
+                                `${team}-${section}-${stat}`
+                            )
+                            if (el) el.innerText = data[team][section][stat]
+                        }
+                    }
+                }
+
+                // Compute our kickout win percentage (total = won + lost)
+                const ourAdv = data.ourTeam.advanced
+                const ourKickWon = Number(ourAdv.kickoutsWon)
+                const ourKickLost = Number(ourAdv.kickoutsLost)
+                const ourTotalKickouts = ourKickWon + ourKickLost
+                const ourKickPct =
+                    ourTotalKickouts > 0
+                        ? ((ourKickWon / ourTotalKickouts) * 100).toFixed(0)
+                        : "N/A"
+                document.getElementById("ourTeam-kickPercent").innerText =
+                    ourTotalKickouts > 0
+                        ? `Our Kickout Win %: ${ourKickPct}%`
+                        : ""
+
+                // Compute opp kickout win percentage (total = won + lost)
+                const oppKickWon = Number(ourAdv.oppKickoutsWon)
+                const oppKickLost = Number(ourAdv.oppKickoutsLost)
+                const oppTotalKickouts = oppKickWon + oppKickLost
+                const oppKickPct =
+                    oppTotalKickouts > 0
+                        ? ((oppKickWon / oppTotalKickouts) * 100).toFixed(0)
+                        : "N/A"
+                document.getElementById("ourTeam-oppKickPercent").innerText =
+                    oppTotalKickouts > 0
+                        ? `Opp Kickout Win %: ${oppKickPct}%`
+                        : ""
+
+                // Compute Total Score for each team (Total = points + 2 * twoPoints)
+                const ourBasic = data.ourTeam.basic
+                const ourTotal = ourBasic.points + 2 * ourBasic.twoPoints
+                document.getElementById(
+                    "ourTeam-totalScore"
+                ).innerText = `Score: ${ourBasic.goals} - ${ourTotal}`
+
+                const oppBasic = data.oppTeam.basic
+                const oppTotal = oppBasic.points + 2 * oppBasic.twoPoints
+                document.getElementById(
+                    "oppTeam-totalScore"
+                ).innerText = `Score: ${oppBasic.goals} - ${oppTotal}`
+
+                // Build Overview Content
+                let overview = `<strong>Our Team Overview:</strong><br>`
+                overview += `Goals: ${ourBasic.goals}, Points: ${ourBasic.points}, 2-Point Scores: ${ourBasic.twoPoints}<br>`
+                overview += `Total Score: ${ourBasic.goals} - ${ourTotal}<br><br>`
+                overview += `<em>Kickouts:</em><br>`
+                overview += `Our: ${ourAdv.kickoutsWon}/${ourTotalKickouts} (${ourKickPct}%)<br>`
+                overview += `Opp: ${ourAdv.oppKickoutsWon}/${oppTotalKickouts} (${oppKickPct}%)<br><br>`
+                overview += `<em>Turnovers:</em><br>`
+                overview += `Forced: ${ourAdv.forcedTurnovers}, Unforced: ${ourAdv.unforcedTurnovers}<br>`
+                overview += `Differential: ${
+                    ourAdv.forcedTurnovers - ourAdv.unforcedTurnovers
+                }<br><br>`
+                const actualScores =
+                    ourBasic.goals + ourBasic.points + ourBasic.twoPoints
+                const missed =
+                    ourAdv.shotsWides +
+                    ourAdv.shotsDroppedShort +
+                    ourAdv.shotsBlocked
+                const totalAttempts = actualScores + missed
+                const shootingEff =
+                    totalAttempts > 0
+                        ? ((actualScores / totalAttempts) * 100).toFixed(0)
+                        : "N/A"
+                overview += `<em>Shooting Efficiency:</em> ${shootingEff}%<br><br>`
+
+                overview += `<strong>Opposition Overview:</strong><br>`
+                overview += `Goals: ${oppBasic.goals}, Points: ${oppBasic.points}, 2-Point Scores: ${oppBasic.twoPoints}<br>`
+                overview += `Total Score: ${oppBasic.goals} - ${oppTotal}<br>`
+
+                document.getElementById("overviewStats").innerHTML = overview
+
+                // Update trend chart if exists
+                updateTrendChart()
+            }
+            // Modified update to ensure numeric conversion and add snapshot if updating ourTeam basic stats.
+            function update(team, section, stat, delta, noHistory = false) {
+                let current = Number(data[team][section][stat])
+                if (isNaN(current)) current = 0
+                data[team][section][stat] = Math.max(0, current + delta)
+                if (!noHistory)
+                    historyStack.push({ team, section, stat, delta })
+                if (team === "ourTeam" && section === "basic") {
+                    statsHistory.push({
+                        time: new Date().toLocaleTimeString(),
+                        goals: data.ourTeam.basic.goals,
+                        points: data.ourTeam.basic.points,
+                        twoPoints: data.ourTeam.basic.twoPoints,
+                    })
+                }
+                render()
+                save()
+            }
+            function undo() {
+                if (!historyStack.length) return
+                const last = historyStack.pop()
+                update(last.team, last.section, last.stat, -last.delta, true)
+            }
+            // Toggle collapsible sections using the "open" class
+            function toggleSection(sectionId) {
+                const section = document.getElementById(sectionId)
+                section.classList.toggle("open")
+            }
+            function toggleStatsModal() {
+                const modal = document.getElementById("statsModal")
+                modal.style.display =
+                    modal.style.display === "flex" ? "none" : "flex"
+                if (modal.style.display === "flex") updateTrendChart()
+            }
+            function exportData() {
+                const dataStr = JSON.stringify({ data, statsHistory }, null, 2)
+                const blob = new Blob([dataStr], { type: "application/json" })
+                const url = URL.createObjectURL(blob)
+                const a = document.createElement("a")
+                a.href = url
+                a.download = "gf_stats_backup.json"
+                document.body.appendChild(a)
+                a.click()
+                document.body.removeChild(a)
+            }
+            function updateTrendChart() {
+                const ctx = document
+                    .getElementById("trendChart")
+                    .getContext("2d")
+                const labels = statsHistory.map((snap) => snap.time)
+                const goalsData = statsHistory.map((snap) => snap.goals)
+                const pointsData = statsHistory.map((snap) => snap.points)
+                const twoPointsData = statsHistory.map((snap) => snap.twoPoints)
+                const datasets = [
+                    {
+                        label: "Goals",
+                        data: goalsData,
+                        borderColor: "rgba(75, 192, 192, 1)",
+                        fill: false,
+                    },
+                    {
+                        label: "Points",
+                        data: pointsData,
+                        borderColor: "rgba(153, 102, 255, 1)",
+                        fill: false,
+                    },
+                    {
+                        label: "2-Point Scores",
+                        data: twoPointsData,
+                        borderColor: "rgba(255, 159, 64, 1)",
+                        fill: false,
+                    },
+                ]
+                if (trendChart) {
+                    trendChart.data.labels = labels
+                    trendChart.data.datasets = datasets
+                    trendChart.update()
+                } else {
+                    trendChart = new Chart(ctx, {
+                        type: "line",
+                        data: { labels, datasets },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                        },
+                    })
+                }
+            }
+            function resetGame() {
+                if (confirm("Reset all stats for a new game?")) {
+                    for (const team in data) {
+                        for (const section in data[team]) {
+                            for (const stat in data[team][section]) {
+                                data[team][section][stat] = 0
+                            }
+                        }
+                    }
+                    historyStack.length = 0
+                    statsHistory = []
+                    render()
+                    save()
+                    toggleStatsModal()
+                }
+            }
+            load()
+
+            if ("serviceWorker" in navigator) {
+                navigator.serviceWorker
+                    .register("sw.js")
+                    .then((reg) =>
+                        console.log("Service worker registered.", reg)
+                    )
+                    .catch((err) =>
+                        console.error(
+                            "Service worker registration failed:",
+                            err
+                        )
+                    )
+            }
+        </script>
+    </body>
+</html>
