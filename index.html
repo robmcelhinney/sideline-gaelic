@@ -641,6 +641,17 @@
                         twoPoints: data.ourTeam.basic.twoPoints,
                     })
                 }
+                // --- Confetti celebration for 'gers' param ---
+                if (
+                    window.gersCelebration &&
+                    team === "ourTeam" &&
+                    section === "basic" &&
+                    ["goals", "points", "twoPoints"].includes(stat) &&
+                    delta > 0
+                ) {
+                    showConfetti()
+                }
+                // --- end confetti ---
                 render()
                 save()
             }
@@ -732,19 +743,30 @@
             }
             load()
 
-            // Register service worker for offline caching
-            if ("serviceWorker" in navigator) {
-                navigator.serviceWorker
-                    .register("sw.js")
-                    .then((reg) =>
-                        console.log("Service worker registered.", reg)
-                    )
-                    .catch((err) =>
-                        console.error(
-                            "Service worker registration failed:",
-                            err
-                        )
-                    )
+            // --- Confetti celebration setup ---
+            // Check for 'gers' parameter in URL
+            window.gersCelebration = new URLSearchParams(
+                window.location.search
+            ).has("gers")
+            // Load canvas-confetti if needed
+            if (window.gersCelebration) {
+                const script = document.createElement("script")
+                script.src =
+                    "https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"
+                script.onload = () => {
+                    window.confetti = window.confetti
+                }
+                document.head.appendChild(script)
+            }
+            // Confetti function
+            function showConfetti() {
+                if (window.confetti) {
+                    window.confetti({
+                        particleCount: 80,
+                        spread: 70,
+                        origin: { y: 0.7 },
+                    })
+                }
             }
         </script>
     </body>
