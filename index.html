@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
@@ -193,7 +193,9 @@
                 display: inline-flex;
                 align-items: center;
                 gap: 5px;
-                transition: background-color 0.2s ease, border-color 0.2s ease;
+                transition:
+                    background-color 0.2s ease,
+                    border-color 0.2s ease;
             }
             .mini-toggle-btn:hover {
                 background: #e4f1eb;
@@ -299,7 +301,9 @@
                 max-height: 0;
                 overflow: hidden;
                 opacity: 0;
-                transition: max-height 0.5s ease, opacity 0.5s ease;
+                transition:
+                    max-height 0.5s ease,
+                    opacity 0.5s ease;
             }
             .collapsible.open {
                 max-height: 500px;
@@ -320,7 +324,9 @@
                 font: inherit;
                 font-weight: 700;
                 cursor: pointer;
-                transition: background-color 0.2s ease, color 0.2s ease;
+                transition:
+                    background-color 0.2s ease,
+                    color 0.2s ease;
             }
             .team-tab:hover {
                 background: #edf5f1;
@@ -661,9 +667,7 @@
                 </div>
             </div>
             <div class="section advanced-card">
-                <h3>
-                    Advanced Tracking (Both Sides)
-                </h3>
+                <h3>Advanced Tracking (Our Team)</h3>
                 <div class="mini-section">
                     <div class="mini-title-row">
                         <div class="mini-title">Kickouts</div>
@@ -857,7 +861,7 @@
                 localStorage.setItem("gfHistory", JSON.stringify(statsHistory))
                 localStorage.setItem(
                     "gfShowFullPointTotals",
-                    JSON.stringify(showFullPointTotals)
+                    JSON.stringify(showFullPointTotals),
                 )
             }
             function load() {
@@ -866,7 +870,7 @@
                 const savedHistory = localStorage.getItem("gfHistory")
                 if (savedHistory) statsHistory = JSON.parse(savedHistory)
                 const savedScoreMode = localStorage.getItem(
-                    "gfShowFullPointTotals"
+                    "gfShowFullPointTotals",
                 )
                 if (savedScoreMode !== null) {
                     showFullPointTotals = JSON.parse(savedScoreMode)
@@ -878,7 +882,7 @@
                     for (const section in data[team]) {
                         for (const stat in data[team][section]) {
                             const el = document.getElementById(
-                                `${team}-${section}-${stat}`
+                                `${team}-${section}-${stat}`,
                             )
                             if (el) el.innerText = data[team][section][stat]
                         }
@@ -916,20 +920,18 @@
                 const ourBasic = data.ourTeam.basic
                 const ourTotal = ourBasic.points + 2 * ourBasic.twoPoints
                 const ourFullTotal = ourBasic.goals * 3 + ourTotal
-                document.getElementById(
-                    "ourTeam-totalScore"
-                ).innerText = showFullPointTotals
-                    ? `Total Points: ${ourFullTotal}`
-                    : `Score: ${ourBasic.goals} - ${ourTotal}`
+                document.getElementById("ourTeam-totalScore").innerText =
+                    showFullPointTotals
+                        ? `Total Points: ${ourFullTotal}`
+                        : `Score: ${ourBasic.goals} - ${ourTotal}`
 
                 const oppBasic = data.oppTeam.basic
                 const oppTotal = oppBasic.points + 2 * oppBasic.twoPoints
                 const oppFullTotal = oppBasic.goals * 3 + oppTotal
-                document.getElementById(
-                    "oppTeam-totalScore"
-                ).innerText = showFullPointTotals
-                    ? `Total Points: ${oppFullTotal}`
-                    : `Score: ${oppBasic.goals} - ${oppTotal}`
+                document.getElementById("oppTeam-totalScore").innerText =
+                    showFullPointTotals
+                        ? `Total Points: ${oppFullTotal}`
+                        : `Score: ${oppBasic.goals} - ${oppTotal}`
 
                 // Build Overview Content
                 const ourOverviewScore = showFullPointTotals
@@ -1010,7 +1012,8 @@
             function toggleSection(sectionId) {
                 const section = document.getElementById(sectionId)
                 const isOpen = section.classList.toggle("open")
-                if (sectionId === "ourTeam-kickouts") updateKickoutsToggleLabel(isOpen)
+                if (sectionId === "ourTeam-kickouts")
+                    updateKickoutsToggleLabel(isOpen)
             }
             function updateKickoutsToggleLabel(isOpen) {
                 const btn = document.getElementById("kickoutsToggleBtn")
@@ -1026,7 +1029,10 @@
                     const isActive = id === teamId
                     panel.classList.toggle("active", isActive)
                     tab.classList.toggle("active", isActive)
-                    tab.setAttribute("aria-selected", isActive ? "true" : "false")
+                    tab.setAttribute(
+                        "aria-selected",
+                        isActive ? "true" : "false",
+                    )
                 })
             }
             function getActiveTeamId() {
@@ -1114,7 +1120,7 @@
             updateKickoutsToggleLabel(
                 document
                     .getElementById("ourTeam-kickouts")
-                    .classList.contains("open")
+                    .classList.contains("open"),
             )
 
             // Close modal on backdrop click or Escape key.
@@ -1145,7 +1151,7 @@
                     swipeStartY = touch.clientY
                     swipeStartTime = Date.now()
                 },
-                { passive: true }
+                { passive: true },
             )
             teamsContainer.addEventListener(
                 "touchend",
@@ -1170,7 +1176,7 @@
                         showTeamTab("ourTeam")
                     }
                 },
-                { passive: true }
+                { passive: true },
             )
 
             // Register service worker for offline caching
@@ -1178,13 +1184,13 @@
                 navigator.serviceWorker
                     .register("sw.js")
                     .then((reg) =>
-                        console.log("Service worker registered.", reg)
+                        console.log("Service worker registered.", reg),
                     )
                     .catch((err) =>
                         console.error(
                             "Service worker registration failed:",
-                            err
-                        )
+                            err,
+                        ),
                     )
             }
         </script>
