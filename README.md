@@ -7,6 +7,12 @@
 -   **Real-time Stats Tracking:**  
     Record goals, points, 2-point scores, kickouts (won/lost for both teams), turnovers, and shooting metrics.
 
+-   **Fast Team Switching:**  
+    Top tabs let you switch between **Our Team** and **Opposition** basic scoring views, with mobile swipe left/right support.
+
+-   **Flexible Score Display:**  
+    Tap either score line to toggle between `goals-points` format and full points total (`goal=3`, `2-point=2`, `point=1`).
+
 -   **Responsive & Touch-Friendly:**  
     Fluid layouts and large touch targets ensure seamless use on any mobile device.
 
@@ -37,11 +43,17 @@ Then open index.html in your browser. For a live demo, deploy the project to Git
 -   Recording Stats:
     Tap the buttons to increment stats. Use the Undo button to correct mistakes.
 
--   Advanced Stats:
-    Toggle the Kickouts section to reveal detailed kickout stats.
+-   Team Tabs:
+    Use the **Our Team** / **Opposition** tabs (or swipe horizontally on mobile) to switch basic scoring views quickly.
+
+-   Advanced Tracking (Both Sides):
+    Advanced stats are always visible in a shared card beneath the tabs. Use the **Show Kickouts / Hide Kickouts** button in the Kickouts header to collapse or expand kickout details.
+
+-   Score Format Toggle:
+    Tap a team score row to switch between `Score: goals - points` and `Total Points: N`.
 
 -   Overview & Trends:
-    Click the "Show More Stats" button to open a modal that displays an overview of all recorded stats, a responsive trend chart, and options to backup/export or reset stats.
+    Click **Show More Stats** to open a modal with overview and trend panels, plus backup/export and reset actions. The modal also closes via backdrop tap or `Esc`.
 
 -   Installable:
     On mobile, add the app to your home screen for a native-like experience.

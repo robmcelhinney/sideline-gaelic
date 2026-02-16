@@ -31,25 +31,28 @@
         <!-- Include Chart.js for trends visualization -->
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <link
-            href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
+            href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700&display=swap"
             rel="stylesheet"
         />
         <style>
             :root {
-                --primary-color: #007bff;
-                --secondary-color: #0056b3;
-                --bg-color: #f7f9fc;
+                --primary-color: #0c8f6f;
+                --primary-hover: #0a7359;
+                --bg-color: #f3f6f4;
                 --card-bg: #ffffff;
-                --text-color: #333;
-                --border-radius: 8px;
+                --text-color: #17211f;
+                --muted-text: #587069;
+                --surface-border: #d9e1dc;
+                --border-radius: 10px;
+                --shadow-soft: 0 1px 2px rgba(20, 34, 29, 0.06);
             }
             * {
                 box-sizing: border-box;
             }
             body {
-                font-family: "Roboto", sans-serif;
+                font-family: "Manrope", "Segoe UI", sans-serif;
                 margin: 0;
-                padding-top: 70px;
+                padding-top: 80px;
                 background: var(--bg-color);
                 color: var(--text-color);
             }
@@ -58,120 +61,238 @@
                 top: 0;
                 left: 0;
                 right: 0;
-                height: 60px;
-                background: var(--card-bg);
-                border-bottom: 1px solid #ddd;
+                height: 62px;
+                background: #fff;
+                border-bottom: 1px solid var(--surface-border);
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                padding: 0 20px;
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                padding: 0 16px;
+                box-shadow: none;
                 z-index: 1000;
             }
             header h1 {
-                font-size: 1.5em;
+                font-size: 1.22rem;
                 margin: 0;
+                letter-spacing: -0.02em;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+            header h1::before {
+                content: "";
+                width: 28px;
+                height: 28px;
+                border-radius: 7px;
+                background: #e9f5f1 url("icons/logo.png") center/75% no-repeat;
             }
             .header-buttons button {
-                padding: 10px 15px;
-                font-size: 1em;
-                border: none;
+                padding: 9px 14px;
+                font-size: 0.95em;
+                border: 1px solid #0e7f63;
                 border-radius: var(--border-radius);
                 background: var(--primary-color);
                 color: #fff;
                 cursor: pointer;
-                margin-left: 10px;
-                transition: background-color 0.2s ease;
+                margin-left: 8px;
+                font-weight: 700;
+                transition:
+                    background-color 0.2s ease,
+                    transform 0.12s ease;
+            }
+            .header-buttons button:hover {
+                background: var(--primary-hover);
             }
             .header-buttons button:active {
-                background: var(--secondary-color);
+                transform: translateY(1px);
             }
             main[role="main"] {
-                margin: 20px;
+                max-width: 1080px;
+                margin: 18px auto 28px;
+                padding: 0 14px;
             }
             .teams {
-                display: flex;
-                flex-direction: column;
-                gap: 20px;
+                display: block;
+                touch-action: pan-y;
             }
             .team {
                 background: var(--card-bg);
-                border: 1px solid #ddd;
+                border: 1px solid var(--surface-border);
                 border-radius: var(--border-radius);
                 padding: 15px;
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                box-shadow: var(--shadow-soft);
+                display: none;
+            }
+            .team.active {
+                display: block;
             }
             .team h2 {
                 text-align: center;
-                margin: 0 0 10px;
+                margin: 0 0 12px;
+                letter-spacing: -0.02em;
             }
             .section {
                 margin-bottom: 20px;
             }
             .section h3 {
                 margin-bottom: 10px;
-                font-size: 1.1em;
+                font-size: 1.02em;
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                border-bottom: 1px solid #eee;
-                padding-bottom: 5px;
+                border-bottom: 1px solid #e9efeb;
+                padding-bottom: 8px;
+            }
+            .advanced-card {
+                border: 1px solid #e4ece8;
+                border-radius: 10px;
+                background: #fbfcfc;
+                padding: 12px;
+            }
+            .advanced-card h3 {
+                margin-top: 0;
+                margin-bottom: 4px;
+            }
+            .mini-section {
+                margin-top: 12px;
+                padding-top: 10px;
+                border-top: 1px solid #edf2f0;
+            }
+            .mini-section:first-of-type {
+                margin-top: 8px;
+                padding-top: 0;
+                border-top: none;
+            }
+            .mini-title {
+                margin: 0 0 6px;
+                font-size: 0.82rem;
+                font-weight: 700;
+                letter-spacing: 0.04em;
+                text-transform: uppercase;
+                color: #47685e;
+            }
+            .mini-title-row {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 8px;
+                margin-bottom: 6px;
+            }
+            .mini-toggle-btn {
+                padding: 5px 9px;
+                font-size: 0.75rem;
+                border: 1px solid #b8d4c8;
+                border-radius: 8px;
+                background: #eef7f3;
+                color: #1f4f40;
+                font-family: inherit;
+                font-weight: 700;
+                cursor: pointer;
+                line-height: 1.1;
+                white-space: nowrap;
+                display: inline-flex;
+                align-items: center;
+                gap: 5px;
+                transition: background-color 0.2s ease, border-color 0.2s ease;
+            }
+            .mini-toggle-btn:hover {
+                background: #e4f1eb;
+                border-color: #9ec6b7;
+            }
+            .mini-toggle-btn[aria-expanded="true"] {
+                background: #0c8f6f;
+                border-color: #0e7f63;
+                color: #fff;
             }
             .section h3 button {
                 padding: 6px 10px;
-                font-size: 0.9em;
-                border: none;
-                border-radius: var(--border-radius);
-                background: var(--primary-color);
-                color: #fff;
-                cursor: pointer;
-                transition: background-color 0.2s ease;
+                font-size: 0.83em;
+                border: 1px solid #cfe0d8;
+                border-radius: 10px;
+                background: #f7fbf9;
+                color: #125646;
+                font-weight: 700;
+                box-shadow: none;
+                line-height: 1.2;
+                white-space: nowrap;
+                min-height: 36px;
+                touch-action: manipulation;
             }
-            .section h3 button:active {
-                background: var(--secondary-color);
+            .section h3 button:hover {
+                background: #edf5f1;
             }
             .stat {
-                display: flex;
+                display: grid;
+                grid-template-columns: 1fr auto auto;
                 align-items: center;
-                justify-content: space-between;
-                padding: 8px 0;
-                border-bottom: 1px solid #f0f0f0;
+                column-gap: 10px;
+                row-gap: 6px;
+                padding: 10px 0;
+                border-bottom: 1px solid #f0f4f2;
             }
             .stat:last-child {
                 border-bottom: none;
             }
             .stat label {
-                flex: 1;
+                color: var(--muted-text);
+                font-size: 0.94rem;
+                min-width: 0;
             }
             .stat span {
-                flex: 0 0 50px;
+                min-width: 46px;
                 text-align: center;
-                font-size: 1.2em;
+                font-size: 1.08rem;
+                font-weight: 700;
+                color: #1a3029;
+                background: #f8faf9;
+                border-radius: 10px;
+                padding: 6px 8px;
+                border: 1px solid #e7eeea;
             }
             .stat button {
-                padding: 10px 15px;
-                font-size: 1em;
-                border: none;
-                border-radius: var(--border-radius);
+                padding: 9px 12px;
+                font-size: 0.96em;
+                border: 1px solid #0e7f63;
+                border-radius: 10px;
                 background: var(--primary-color);
                 color: #fff;
                 cursor: pointer;
-                transition: background-color 0.2s ease;
-                margin-left: 10px;
+                transition:
+                    background-color 0.2s ease,
+                    transform 0.12s ease;
+                margin-left: 0;
+                min-width: 54px;
+                font-weight: 700;
+                touch-action: manipulation;
+            }
+            .stat button:hover {
+                background: var(--primary-hover);
             }
             .stat button:active {
-                background: var(--secondary-color);
+                transform: translateY(1px);
             }
             .sub-header {
                 margin: 10px 0;
-                font-weight: bold;
+                font-weight: 700;
                 text-align: center;
+                color: #224f41;
             }
             .computed {
-                font-size: 0.9em;
-                color: #555;
-                margin-top: 4px;
+                font-size: 0.92em;
+                color: #31564a;
+                margin-top: 8px;
                 text-align: center;
+                background: #f8faf9;
+                border: 1px solid #e7efeb;
+                border-radius: 10px;
+                padding: 8px 10px;
+            }
+            .score-toggle {
+                cursor: pointer;
+                user-select: none;
+            }
+            .score-toggle:active {
+                opacity: 0.8;
             }
             /* Only Kickouts remains collapsible */
             .collapsible {
@@ -184,30 +305,68 @@
                 max-height: 500px;
                 opacity: 1;
             }
-            @media (min-width: 600px) {
-                .teams {
-                    flex-direction: row;
-                }
-                .team {
-                    flex: 1;
-                }
+            .team-tabs {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+                margin-bottom: 12px;
+            }
+            .team-tab {
+                border: 1px solid #cfe0d8;
+                background: #f7fbf9;
+                color: #2a4f43;
+                border-radius: 10px;
+                padding: 10px 12px;
+                font: inherit;
+                font-weight: 700;
+                cursor: pointer;
+                transition: background-color 0.2s ease, color 0.2s ease;
+            }
+            .team-tab:hover {
+                background: #edf5f1;
+            }
+            .team-tab.active {
+                background: var(--primary-color);
+                border-color: #0e7f63;
+                color: #fff;
             }
             .more-stats-btn {
                 text-align: center;
-                margin: 20px;
+                margin: 14px 0 0;
             }
             .more-stats-btn button {
                 padding: 12px 20px;
                 font-size: 1em;
-                border: none;
+                border: 1px solid #0e7f63;
                 border-radius: var(--border-radius);
                 background: var(--primary-color);
                 color: #fff;
                 cursor: pointer;
-                transition: background-color 0.2s ease;
+                transition:
+                    background-color 0.2s ease,
+                    transform 0.12s ease;
+                font-weight: 700;
+            }
+            .more-stats-btn button:hover {
+                background: var(--primary-hover);
             }
             .more-stats-btn button:active {
-                background: var(--secondary-color);
+                transform: translateY(1px);
+            }
+            .repo-link {
+                text-align: center;
+                margin: 14px 0 4px;
+                font-size: 0.85rem;
+                color: var(--muted-text);
+            }
+            .repo-link a {
+                color: #2a5f4f;
+                text-decoration: none;
+                border-bottom: 1px solid #c7dbd2;
+            }
+            .repo-link a:hover {
+                color: #17483a;
+                border-bottom-color: #8fb8aa;
             }
             /* Modal styling */
             .modal {
@@ -217,7 +376,8 @@
                 left: 0;
                 width: 100%;
                 height: 100%;
-                background: rgba(0, 0, 0, 0.5);
+                padding: 14px;
+                background: rgba(15, 26, 22, 0.44);
                 z-index: 2000;
                 justify-content: center;
                 align-items: center;
@@ -233,30 +393,60 @@
             }
             .modal-content {
                 background: var(--card-bg);
-                padding: 20px;
+                padding: 22px 20px 20px;
                 border-radius: var(--border-radius);
-                max-width: 500px;
-                width: 90%;
-                text-align: center;
+                max-width: 620px;
+                width: 100%;
+                max-height: calc(100vh - 28px);
+                overflow-y: auto;
+                text-align: left;
                 position: relative;
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+                border: 1px solid var(--surface-border);
+                box-shadow: 0 8px 28px -22px rgba(16, 26, 22, 0.55);
             }
             .modal-content h2 {
-                margin-top: 0;
+                margin: 0 0 6px;
+                text-align: center;
+            }
+            .modal-subtitle {
+                margin: 0 0 14px;
+                text-align: center;
+                color: var(--muted-text);
+                font-size: 0.92rem;
+            }
+            .modal-panel {
+                border: 1px solid #e4ece8;
+                border-radius: 10px;
+                background: #fbfcfc;
+                padding: 12px;
+                margin-top: 12px;
+            }
+            .modal-panel h3 {
+                margin: 0 0 8px;
+                font-size: 0.95rem;
+                letter-spacing: 0.01em;
+                color: #2c4b41;
             }
             .modal-content button {
                 margin-top: 10px;
-                padding: 10px 15px;
-                font-size: 1em;
-                border: none;
-                border-radius: var(--border-radius);
+                margin-right: 8px;
+                padding: 10px 14px;
+                font-size: 0.95em;
+                border: 1px solid #0e7f63;
+                border-radius: 10px;
                 background: var(--primary-color);
                 color: #fff;
                 cursor: pointer;
-                transition: background-color 0.2s ease;
+                font-weight: 700;
+                transition:
+                    background-color 0.2s ease,
+                    transform 0.12s ease;
+            }
+            .modal-content button:hover {
+                background: var(--primary-hover);
             }
             .modal-content button:active {
-                background: var(--secondary-color);
+                transform: translateY(1px);
             }
             .close-modal {
                 position: absolute;
@@ -266,12 +456,84 @@
                 border: none;
                 font-size: 1.5em;
                 cursor: pointer;
+                margin: 0;
+                padding: 4px 8px;
+                color: #5b6e68;
+            }
+            .modal-actions {
+                display: flex;
+                gap: 8px;
+                flex-wrap: wrap;
+                margin-top: 14px;
+            }
+            .modal-actions button {
+                margin: 0;
+            }
+            .modal-actions .btn-secondary {
+                background: #f7fbf9;
+                color: #1f5a49;
+                border-color: #cfe0d8;
+            }
+            .modal-actions .btn-secondary:hover {
+                background: #edf5f1;
+            }
+            .modal-actions .btn-danger {
+                background: #b33c3c;
+                border-color: #9d3333;
+            }
+            .modal-actions .btn-danger:hover {
+                background: #9e3232;
             }
             /* Responsive Trend Chart Container */
             #trendChartContainer {
                 width: 100%;
-                height: 200px;
-                margin-top: 20px;
+                height: 220px;
+                margin-top: 8px;
+            }
+            #overviewStats {
+                color: #304f46;
+                line-height: 1.45;
+            }
+            @media (max-width: 599px) {
+                body {
+                    padding-top: 74px;
+                }
+                header h1 {
+                    font-size: 1.1rem;
+                }
+                .section h3 {
+                    gap: 8px;
+                    align-items: flex-start;
+                    flex-direction: column;
+                }
+                .section h3 button {
+                    width: 100%;
+                }
+                .stat {
+                    grid-template-columns: minmax(0, 1fr) auto auto;
+                }
+                .team-tab {
+                    padding: 10px 8px;
+                    font-size: 0.93rem;
+                }
+                .advanced-card {
+                    max-height: 58vh;
+                    overflow-y: auto;
+                    -webkit-overflow-scrolling: touch;
+                }
+                .modal {
+                    padding: 10px;
+                }
+                .modal-content {
+                    padding: 20px 14px 14px;
+                    max-height: calc(100vh - 20px);
+                }
+                .modal-actions {
+                    flex-direction: column;
+                }
+                .modal-actions button {
+                    width: 100%;
+                }
             }
             #trendChart {
                 width: 100% !important;
@@ -288,9 +550,31 @@
         </header>
 
         <main role="main">
+            <div class="team-tabs" role="tablist" aria-label="Team selector">
+                <button
+                    id="tab-ourTeam"
+                    class="team-tab active"
+                    role="tab"
+                    aria-selected="true"
+                    aria-controls="ourTeam"
+                    onclick="showTeamTab('ourTeam')"
+                >
+                    Our Team
+                </button>
+                <button
+                    id="tab-oppTeam"
+                    class="team-tab"
+                    role="tab"
+                    aria-selected="false"
+                    aria-controls="oppTeam"
+                    onclick="showTeamTab('oppTeam')"
+                >
+                    Opposition
+                </button>
+            </div>
             <div class="teams">
                 <!-- Home Team -->
-                <div class="team" id="ourTeam">
+                <div class="team active" id="ourTeam">
                     <h2>Our Team</h2>
                     <div class="section">
                         <h3>Basic Stats</h3>
@@ -321,119 +605,15 @@
                                 +1
                             </button>
                         </div>
-                        <div class="computed" id="ourTeam-totalScore"></div>
-                    </div>
-                    <div class="section">
-                        <h3>
-                            Advanced Stats
-                            <button onclick="toggleSection('ourTeam-kickouts')">
-                                Toggle Kickouts
-                            </button>
-                        </h3>
-                        <!-- Kickouts Section (collapsible) -->
-                        <div id="ourTeam-kickouts" class="collapsible open">
-                            <div class="stat">
-                                <label>Our Kickouts Won:</label>
-                                <span id="ourTeam-advanced-kickoutsWon">0</span>
-                                <button
-                                    onclick="update('ourTeam','advanced','kickoutsWon',1)"
-                                >
-                                    +1
-                                </button>
-                            </div>
-                            <div class="stat">
-                                <label>Our Kickouts Lost:</label>
-                                <span id="ourTeam-advanced-kickoutsLost"
-                                    >0</span
-                                >
-                                <button
-                                    onclick="update('ourTeam','advanced','kickoutsLost',1)"
-                                >
-                                    +1
-                                </button>
-                            </div>
-                            <div
-                                class="computed"
-                                id="ourTeam-kickPercent"
-                            ></div>
-                            <div class="stat">
-                                <label>Opp Kickouts Won:</label>
-                                <span id="ourTeam-advanced-oppKickoutsWon"
-                                    >0</span
-                                >
-                                <button
-                                    onclick="update('ourTeam','advanced','oppKickoutsWon',1)"
-                                >
-                                    +1
-                                </button>
-                            </div>
-                            <div class="stat">
-                                <label>Opp Kickouts Lost:</label>
-                                <span id="ourTeam-advanced-oppKickoutsLost"
-                                    >0</span
-                                >
-                                <button
-                                    onclick="update('ourTeam','advanced','oppKickoutsLost',1)"
-                                >
-                                    +1
-                                </button>
-                            </div>
-                            <div
-                                class="computed"
-                                id="ourTeam-oppKickPercent"
-                            ></div>
-                        </div>
-                        <div class="stat">
-                            <label>Forced Turnovers:</label>
-                            <span id="ourTeam-advanced-forcedTurnovers">0</span>
-                            <button
-                                onclick="update('ourTeam','advanced','forcedTurnovers',1)"
-                            >
-                                +1
-                            </button>
-                        </div>
-                        <div class="stat">
-                            <label>Unforced Turnovers:</label>
-                            <span id="ourTeam-advanced-unforcedTurnovers"
-                                >0</span
-                            >
-                            <button
-                                onclick="update('ourTeam','advanced','unforcedTurnovers',1)"
-                            >
-                                +1
-                            </button>
-                        </div>
-                        <!-- Shooting Section: Always visible -->
-                        <div class="sub-header">Shooting</div>
-                        <div class="stat">
-                            <label>Wides:</label>
-                            <span id="ourTeam-advanced-shotsWides">0</span>
-                            <button
-                                onclick="update('ourTeam','advanced','shotsWides',1)"
-                            >
-                                +1
-                            </button>
-                        </div>
-                        <div class="stat">
-                            <label>Dropped Short:</label>
-                            <span id="ourTeam-advanced-shotsDroppedShort"
-                                >0</span
-                            >
-                            <button
-                                onclick="update('ourTeam','advanced','shotsDroppedShort',1)"
-                            >
-                                +1
-                            </button>
-                        </div>
-                        <div class="stat">
-                            <label>Blocked Shots:</label>
-                            <span id="ourTeam-advanced-shotsBlocked">0</span>
-                            <button
-                                onclick="update('ourTeam','advanced','shotsBlocked',1)"
-                            >
-                                +1
-                            </button>
-                        </div>
+                        <div
+                            class="computed score-toggle"
+                            id="ourTeam-totalScore"
+                            role="button"
+                            tabindex="0"
+                            title="Tap to toggle score format"
+                            onclick="toggleScoreDisplay()"
+                            onkeydown="handleScoreToggleKey(event)"
+                        ></div>
                     </div>
                 </div>
                 <!-- Opposition Team: Only Basic Stats -->
@@ -468,13 +648,141 @@
                                 +1
                             </button>
                         </div>
-                        <div class="computed" id="oppTeam-totalScore"></div>
+                        <div
+                            class="computed score-toggle"
+                            id="oppTeam-totalScore"
+                            role="button"
+                            tabindex="0"
+                            title="Tap to toggle score format"
+                            onclick="toggleScoreDisplay()"
+                            onkeydown="handleScoreToggleKey(event)"
+                        ></div>
+                    </div>
+                </div>
+            </div>
+            <div class="section advanced-card">
+                <h3>
+                    Advanced Tracking (Both Sides)
+                </h3>
+                <div class="mini-section">
+                    <div class="mini-title-row">
+                        <div class="mini-title">Kickouts</div>
+                        <button
+                            id="kickoutsToggleBtn"
+                            class="mini-toggle-btn"
+                            onclick="toggleSection('ourTeam-kickouts')"
+                            aria-expanded="true"
+                        >
+                            Hide Kickouts
+                        </button>
+                    </div>
+                    <!-- Kickouts Section (collapsible) -->
+                    <div id="ourTeam-kickouts" class="collapsible open">
+                        <div class="stat">
+                            <label>Our Kickouts Won:</label>
+                            <span id="ourTeam-advanced-kickoutsWon">0</span>
+                            <button
+                                onclick="update('ourTeam','advanced','kickoutsWon',1)"
+                            >
+                                +1
+                            </button>
+                        </div>
+                        <div class="stat">
+                            <label>Our Kickouts Lost:</label>
+                            <span id="ourTeam-advanced-kickoutsLost">0</span>
+                            <button
+                                onclick="update('ourTeam','advanced','kickoutsLost',1)"
+                            >
+                                +1
+                            </button>
+                        </div>
+                        <div class="computed" id="ourTeam-kickPercent"></div>
+                        <div class="stat">
+                            <label>Opp Kickouts Won:</label>
+                            <span id="ourTeam-advanced-oppKickoutsWon">0</span>
+                            <button
+                                onclick="update('ourTeam','advanced','oppKickoutsWon',1)"
+                            >
+                                +1
+                            </button>
+                        </div>
+                        <div class="stat">
+                            <label>Opp Kickouts Lost:</label>
+                            <span id="ourTeam-advanced-oppKickoutsLost">0</span>
+                            <button
+                                onclick="update('ourTeam','advanced','oppKickoutsLost',1)"
+                            >
+                                +1
+                            </button>
+                        </div>
+                        <div class="computed" id="ourTeam-oppKickPercent"></div>
+                    </div>
+                </div>
+                <div class="mini-section">
+                    <div class="mini-title">Turnovers</div>
+                    <div class="stat">
+                        <label>Forced Turnovers:</label>
+                        <span id="ourTeam-advanced-forcedTurnovers">0</span>
+                        <button
+                            onclick="update('ourTeam','advanced','forcedTurnovers',1)"
+                        >
+                            +1
+                        </button>
+                    </div>
+                    <div class="stat">
+                        <label>Unforced Turnovers:</label>
+                        <span id="ourTeam-advanced-unforcedTurnovers">0</span>
+                        <button
+                            onclick="update('ourTeam','advanced','unforcedTurnovers',1)"
+                        >
+                            +1
+                        </button>
+                    </div>
+                </div>
+                <div class="mini-section">
+                    <div class="mini-title">Shooting</div>
+                    <div class="stat">
+                        <label>Wides:</label>
+                        <span id="ourTeam-advanced-shotsWides">0</span>
+                        <button
+                            onclick="update('ourTeam','advanced','shotsWides',1)"
+                        >
+                            +1
+                        </button>
+                    </div>
+                    <div class="stat">
+                        <label>Dropped Short:</label>
+                        <span id="ourTeam-advanced-shotsDroppedShort">0</span>
+                        <button
+                            onclick="update('ourTeam','advanced','shotsDroppedShort',1)"
+                        >
+                            +1
+                        </button>
+                    </div>
+                    <div class="stat">
+                        <label>Blocked Shots:</label>
+                        <span id="ourTeam-advanced-shotsBlocked">0</span>
+                        <button
+                            onclick="update('ourTeam','advanced','shotsBlocked',1)"
+                        >
+                            +1
+                        </button>
                     </div>
                 </div>
             </div>
             <!-- Floating "Show More Stats" Button -->
             <div class="more-stats-btn">
                 <button onclick="toggleStatsModal()">Show More Stats</button>
+            </div>
+            <div class="repo-link">
+                Source:
+                <a
+                    href="https://github.com/robmcelhinney/sideline-gaelic"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    github.com/robmcelhinney/sideline-gaelic
+                </a>
             </div>
         </main>
 
@@ -487,20 +795,34 @@
             aria-labelledby="modalTitle"
         >
             <div class="modal-content">
-                <button class="close-modal" onclick="toggleStatsModal()">
+                <button
+                    class="close-modal"
+                    onclick="toggleStatsModal()"
+                    aria-label="Close stats modal"
+                >
                     &times;
                 </button>
                 <h2 id="modalTitle">Overview & Trends</h2>
-                <div
-                    id="overviewStats"
-                    style="text-align: left; margin-top: 20px"
-                ></div>
-                <!-- Fixed height container for the trend chart -->
-                <div id="trendChartContainer">
-                    <canvas id="trendChart"></canvas>
+                <p class="modal-subtitle">Quick snapshot and game flow</p>
+                <div class="modal-panel">
+                    <h3>Overview</h3>
+                    <div id="overviewStats"></div>
                 </div>
-                <button onclick="exportData()">Backup/Export</button>
-                <button onclick="resetGame()">Reset/New Game</button>
+                <div class="modal-panel">
+                    <h3>Scoring Trend</h3>
+                    <!-- Fixed height container for the trend chart -->
+                    <div id="trendChartContainer">
+                        <canvas id="trendChart"></canvas>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn-secondary" onclick="exportData()">
+                        Backup/Export
+                    </button>
+                    <button class="btn-danger" onclick="resetGame()">
+                        Reset/New Game
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -528,16 +850,27 @@
             const historyStack = []
             let statsHistory = [] // For trend chart snapshots
             let trendChart // Chart.js instance
+            let showFullPointTotals = false
 
             function save() {
                 localStorage.setItem("gfFullStats", JSON.stringify(data))
                 localStorage.setItem("gfHistory", JSON.stringify(statsHistory))
+                localStorage.setItem(
+                    "gfShowFullPointTotals",
+                    JSON.stringify(showFullPointTotals)
+                )
             }
             function load() {
                 const saved = localStorage.getItem("gfFullStats")
                 if (saved) Object.assign(data, JSON.parse(saved))
                 const savedHistory = localStorage.getItem("gfHistory")
                 if (savedHistory) statsHistory = JSON.parse(savedHistory)
+                const savedScoreMode = localStorage.getItem(
+                    "gfShowFullPointTotals"
+                )
+                if (savedScoreMode !== null) {
+                    showFullPointTotals = JSON.parse(savedScoreMode)
+                }
                 render()
             }
             function render() {
@@ -582,20 +915,33 @@
                 // Compute Total Score for each team (Total = points + 2 * twoPoints)
                 const ourBasic = data.ourTeam.basic
                 const ourTotal = ourBasic.points + 2 * ourBasic.twoPoints
+                const ourFullTotal = ourBasic.goals * 3 + ourTotal
                 document.getElementById(
                     "ourTeam-totalScore"
-                ).innerText = `Score: ${ourBasic.goals} - ${ourTotal}`
+                ).innerText = showFullPointTotals
+                    ? `Total Points: ${ourFullTotal}`
+                    : `Score: ${ourBasic.goals} - ${ourTotal}`
 
                 const oppBasic = data.oppTeam.basic
                 const oppTotal = oppBasic.points + 2 * oppBasic.twoPoints
+                const oppFullTotal = oppBasic.goals * 3 + oppTotal
                 document.getElementById(
                     "oppTeam-totalScore"
-                ).innerText = `Score: ${oppBasic.goals} - ${oppTotal}`
+                ).innerText = showFullPointTotals
+                    ? `Total Points: ${oppFullTotal}`
+                    : `Score: ${oppBasic.goals} - ${oppTotal}`
 
                 // Build Overview Content
+                const ourOverviewScore = showFullPointTotals
+                    ? `Total Points: ${ourFullTotal}`
+                    : `Total Score: ${ourBasic.goals} - ${ourTotal}`
+                const oppOverviewScore = showFullPointTotals
+                    ? `Total Points: ${oppFullTotal}`
+                    : `Total Score: ${oppBasic.goals} - ${oppTotal}`
+
                 let overview = `<strong>Our Team Overview:</strong><br>`
                 overview += `Goals: ${ourBasic.goals}, Points: ${ourBasic.points}, 2-Point Scores: ${ourBasic.twoPoints}<br>`
-                overview += `Total Score: ${ourBasic.goals} - ${ourTotal}<br><br>`
+                overview += `${ourOverviewScore}<br><br>`
                 overview += `<em>Kickouts:</em><br>`
                 overview += `Our: ${ourAdv.kickoutsWon}/${ourTotalKickouts} (${ourKickPct}%)<br>`
                 overview += `Opp: ${ourAdv.oppKickoutsWon}/${oppTotalKickouts} (${oppKickPct}%)<br><br>`
@@ -619,12 +965,23 @@
 
                 overview += `<strong>Opposition Overview:</strong><br>`
                 overview += `Goals: ${oppBasic.goals}, Points: ${oppBasic.points}, 2-Point Scores: ${oppBasic.twoPoints}<br>`
-                overview += `Total Score: ${oppBasic.goals} - ${oppTotal}<br>`
+                overview += `${oppOverviewScore}<br>`
 
                 document.getElementById("overviewStats").innerHTML = overview
 
                 // Update trend chart if exists
                 updateTrendChart()
+            }
+            function toggleScoreDisplay() {
+                showFullPointTotals = !showFullPointTotals
+                render()
+                save()
+            }
+            function handleScoreToggleKey(event) {
+                if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault()
+                    toggleScoreDisplay()
+                }
             }
             // Modified update to ensure numeric conversion and add snapshot if updating ourTeam basic stats.
             function update(team, section, stat, delta, noHistory = false) {
@@ -652,13 +1009,36 @@
             // Toggle collapsible sections using the "open" class
             function toggleSection(sectionId) {
                 const section = document.getElementById(sectionId)
-                section.classList.toggle("open")
+                const isOpen = section.classList.toggle("open")
+                if (sectionId === "ourTeam-kickouts") updateKickoutsToggleLabel(isOpen)
+            }
+            function updateKickoutsToggleLabel(isOpen) {
+                const btn = document.getElementById("kickoutsToggleBtn")
+                if (!btn) return
+                btn.setAttribute("aria-expanded", isOpen ? "true" : "false")
+                btn.textContent = isOpen ? "Hide Kickouts" : "Show Kickouts"
+            }
+            function showTeamTab(teamId) {
+                const teams = ["ourTeam", "oppTeam"]
+                teams.forEach((id) => {
+                    const panel = document.getElementById(id)
+                    const tab = document.getElementById(`tab-${id}`)
+                    const isActive = id === teamId
+                    panel.classList.toggle("active", isActive)
+                    tab.classList.toggle("active", isActive)
+                    tab.setAttribute("aria-selected", isActive ? "true" : "false")
+                })
+            }
+            function getActiveTeamId() {
+                const activeTab = document.querySelector(".team-tab.active")
+                return activeTab ? activeTab.id.replace("tab-", "") : "ourTeam"
             }
             function toggleStatsModal() {
                 const modal = document.getElementById("statsModal")
-                modal.style.display =
-                    modal.style.display === "flex" ? "none" : "flex"
-                if (modal.style.display === "flex") updateTrendChart()
+                const isOpen = modal.style.display === "flex"
+                modal.style.display = isOpen ? "none" : "flex"
+                document.body.style.overflow = isOpen ? "" : "hidden"
+                if (!isOpen) updateTrendChart()
             }
             function exportData() {
                 const dataStr = JSON.stringify({ data, statsHistory }, null, 2)
@@ -731,6 +1111,67 @@
                 }
             }
             load()
+            updateKickoutsToggleLabel(
+                document
+                    .getElementById("ourTeam-kickouts")
+                    .classList.contains("open")
+            )
+
+            // Close modal on backdrop click or Escape key.
+            const statsModal = document.getElementById("statsModal")
+            statsModal.addEventListener("click", (event) => {
+                if (event.target === statsModal) toggleStatsModal()
+            })
+            document.addEventListener("keydown", (event) => {
+                if (
+                    event.key === "Escape" &&
+                    statsModal.style.display === "flex"
+                ) {
+                    toggleStatsModal()
+                }
+            })
+
+            // Swipe left/right to switch team tabs on mobile.
+            const teamsContainer = document.querySelector(".teams")
+            let swipeStartX = 0
+            let swipeStartY = 0
+            let swipeStartTime = 0
+            teamsContainer.addEventListener(
+                "touchstart",
+                (event) => {
+                    if (!event.touches.length) return
+                    const touch = event.touches[0]
+                    swipeStartX = touch.clientX
+                    swipeStartY = touch.clientY
+                    swipeStartTime = Date.now()
+                },
+                { passive: true }
+            )
+            teamsContainer.addEventListener(
+                "touchend",
+                (event) => {
+                    if (!event.changedTouches.length) return
+                    if (statsModal.style.display === "flex") return
+                    const touch = event.changedTouches[0]
+                    const dx = touch.clientX - swipeStartX
+                    const dy = touch.clientY - swipeStartY
+                    const elapsed = Date.now() - swipeStartTime
+                    const absX = Math.abs(dx)
+                    const absY = Math.abs(dy)
+
+                    const isHorizontalSwipe =
+                        absX >= 45 && absX > absY * 1.4 && elapsed <= 600
+                    if (!isHorizontalSwipe) return
+
+                    const activeTeam = getActiveTeamId()
+                    if (dx < 0 && activeTeam === "ourTeam") {
+                        showTeamTab("oppTeam")
+                    } else if (dx > 0 && activeTeam === "oppTeam") {
+                        showTeamTab("ourTeam")
+                    }
+                },
+                { passive: true }
+            )
 
             // Register service worker for offline caching
             if ("serviceWorker" in navigator) {
